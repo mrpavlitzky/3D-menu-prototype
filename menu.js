@@ -296,7 +296,14 @@ function animate() {
 
 // Check if GSAP is loaded - it's required for animations
 if (typeof gsap === 'undefined') {
-    console.error('GSAP library failed to load. Animations will not work properly.');
+    document.addEventListener('DOMContentLoaded', () => {
+        const infoElement = document.querySelector('#info p');
+        if (infoElement) {
+            infoElement.textContent = 'Error: Animation library failed to load. Please refresh the page.';
+            infoElement.style.color = '#ff6b6b';
+        }
+    });
+    throw new Error('GSAP library failed to load. Animations require GSAP to function properly.');
 }
 
 // Initialize when DOM is ready
