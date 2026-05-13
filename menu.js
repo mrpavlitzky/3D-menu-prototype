@@ -3,6 +3,10 @@ let scene, camera, renderer, menuItems = [];
 let raycaster, mouse;
 let hoveredItem = null;
 
+// Constants
+const MESSAGE_DISPLAY_DURATION = 2000; // milliseconds
+const MS_TO_SECONDS = 0.001;
+
 // Menu configuration
 const menuConfig = [
     { label: 'Home', color: 0x3498db, position: { x: -3, y: 2, z: 0 } },
@@ -175,7 +179,6 @@ function onMouseMove(event) {
 
 function onMouseClick(event) {
     if (hoveredItem) {
-        console.log('Clicked on:', hoveredItem.userData.label);
         selectMenuItem(hoveredItem);
     }
 }
@@ -263,7 +266,7 @@ function selectMenuItem(item) {
     infoElement.textContent = `Selected: ${item.userData.label}`;
     setTimeout(() => {
         infoElement.textContent = 'Hover over menu items to interact • Click to select';
-    }, 2000);
+    }, MESSAGE_DISPLAY_DURATION);
 }
 
 function onWindowResize() {
@@ -276,7 +279,7 @@ function animate() {
     requestAnimationFrame(animate);
 
     // Rotate menu items slightly
-    const time = Date.now() * 0.001;
+    const time = Date.now() * MS_TO_SECONDS;
     menuItems.forEach((item, index) => {
         item.rotation.y = Math.sin(time + index) * 0.1;
         
@@ -291,19 +294,9 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-// Fallback for GSAP animations if not available
+// Check if GSAP is loaded - it's required for animations
 if (typeof gsap === 'undefined') {
-    window.gsap = {
-        to: function(target, props) {
-            // Simple fallback without animation
-            Object.keys(props).forEach(key => {
-                if (key !== 'duration' && key !== 'ease' && key !== 'yoyo' && key !== 'repeat' && key !== 'onComplete') {
-                    target[key] = props[key];
-                }
-            });
-            if (props.onComplete) props.onComplete();
-        }
-    };
+    console.error('GSAP library failed to load. Animations will not work properly.');
 }
 
 // Initialize when DOM is ready
